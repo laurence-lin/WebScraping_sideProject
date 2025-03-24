@@ -37,12 +37,6 @@ def get_static_data(url):
     meta_content = soup.find('meta', property="og:title")
 
     num_view, num_face, video_content, reel_tag, poster = get_meta(meta_content)
-    
-    print("Number of views: ", num_view)
-    print("Number of faces: ", num_face)
-    print("Content of video: ", video_content)
-    print("Reel video tag: ", reel_tag)
-    print("Poster of the Video: ", poster)
 
     result = {"Reel 標記": reel_tag, "Reel 內文": video_content, "Reel 發文者": poster, "Reel 表情數": num_face}
     return result
@@ -159,8 +153,7 @@ def click_reply_buttons(browser):
 
             for button in reply_buttons:
                 try:
-                    # Use JavaScript to click, to avoid interception issues
-                    browser.execute_script("arguments[0].click();", button)
+                    browser.execute_script("arguments[0].click();", button) # Use JavaScript to click, to avoid interception issues
                     print("Reply button clicked.")
                     time.sleep(2) #wait for comments to load.
 
@@ -180,10 +173,9 @@ def access_facebook_content(url, profile_dir):
     static_content = get_static_data(url)
 
     try:
-        comment_data = [] # Initial comment_data, refresh in loop to search all comments
-
-        # Go to Facebook first to ensure you're logged in
-        browser.get("https://www.facebook.com")
+        comment_data = [] # Initial comment_data, refresh in loop to search all comment
+        
+        browser.get("https://www.facebook.com") # Go to Facebook first to ensure you're logged in
         time.sleep(5)
 
         # Check if we need to log in
@@ -216,11 +208,9 @@ def access_facebook_content(url, profile_dir):
             print("Done dealing with '查看更多'and '查看回復' button.")
 
             comment_data = [] # Save the final comments which contains all
-            # Find the comments section by looking for common patterns
-            potential_selectors = [
-                #"div.x78zum5 div[role='article']",
+            
+            potential_selectors = [ # Find the comments section by looking for common patterns
                 "div[aria-label*='comment' i]",
-                #"div.xdj266r div[role='article']",
                 "div[role='article']"
             ]
 
@@ -245,16 +235,13 @@ def access_facebook_content(url, profile_dir):
                     text_selectors = [
                         "div[dir='auto']",
                         "span[dir='auto']",
-                        #"div.x1lliihq"
                     ]
                     comment_text = ""
                     for text_selector in text_selectors:
                         try:
                             elements = comment.find_elements(By.CSS_SELECTOR, text_selector)
                             print("elements of comment text: ", elements)
-                            if elements:
-                                #comment_text += elements[0].text
-                                
+                            if elements:                                
                                 for element in elements:
                                     comment_text += element.text + " " 
 
@@ -265,8 +252,6 @@ def access_facebook_content(url, profile_dir):
                             continue
 
                     name_selectors = [
-                        #"a.x1i10hfl",
-                        #"span.x3nfvp2",
                         "h3",
                         "a[role='link']"
                     ]
